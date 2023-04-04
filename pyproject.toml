@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "asciiator-gui"
+version = "0.1.0"
+description = "A graphical user interface for the Asciiator CLI tool"
+authors = ["Nelu Platonov <nelu.platonov@gmail.com>"]
+readme = "README.md"
+packages = [{include = "src"}]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = ">=3.8, <3.12"
+pyside6 = "^6.4.3"
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.3.0"
+isort = "^5.12.0"
+mypy = "^1.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
