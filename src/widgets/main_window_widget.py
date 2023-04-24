@@ -13,47 +13,27 @@ class MainWindowWidget(QtWidgets.QWidget):
     def __init__(self) -> None:
         super().__init__()
 
-        self.input = {}
-        self.error_messages = []
+        self.input: dict[str, dict] = {}
+        self.error_messages: list[str] = []
 
-        self.layout = QtWidgets.QVBoxLayout(self)
+        self.widget_layout = QtWidgets.QVBoxLayout(self)
 
         self.input_table = InputTable(self)
         self.error_label = QLabel()
         self.select_files_button = SelectFilesButton()
         self.transform_files_button = TransformFilesButton()
 
-        self.input_table.optionsChanged.connect(self.change_file_options)
-        self.input_table.errorOccurred.connect(self.add_error_message)
-        self.input_table.errorOccurred.connect(self.transform_files_button.disable_transform_button)
-        self.input_table.errorRemoved.connect(self.remove_error_message)
-        self.input_table.enableTransform.connect(self.transform_files_button.enable_transform_button)
-
         self.error_label.setWordWrap(True)
 
-        self.select_files_button.filesSelected.connect(
-            self.input_table.display_files
-        )
+        self.setup_input_table_signals()
+        self.setup_select_files_button_signals()
+        self.setup_transform_files_button_signals()
 
-        self.transform_files_button.changeStatus.connect(self.input_table.change_status)
-        self.transform_files_button.clicked.connect(
-            lambda _: self.transform_files_button.transform_images(self.input)
-        )
+        self.add_widgets_to_layout()
 
-        self.layout.addWidget(
-            self.input_table, alignment=Qt.AlignmentFlag.AlignCenter
-        )
-        self.layout.addWidget(
-            self.error_label, alignment=Qt.AlignmentFlag.AlignCenter
-        )
-        self.layout.addWidget(
-            self.select_files_button, alignment=Qt.AlignmentFlag.AlignHCenter
-        )
-        self.layout.addWidget(
-            self.transform_files_button, alignment=Qt.AlignmentFlag.AlignHCenter
-        )
-
-    def change_file_options(self, file_path: str, option: str, option_value: Union[bool, int]) -> None:
+    def change_file_options(
+        self, file_path: str, option: str, option_value: Union[bool, int]
+    ) -> None:
         self.input[file_path][option] = option_value
 
     def add_error_message(self, error_message: str) -> None:
@@ -72,3 +52,41 @@ class MainWindowWidget(QtWidgets.QWidget):
 
         self.error_label.setText(error_message)
 
+    def setup_input_table_signals(self) -> None:
+        self.input_table.optionsChanged.connect(self.change_file_options)
+        self.input_table.errorOccurred.connect(self.add_error_message)
+        self.input_table.errorOccurred.connect(
+            self.transform_files_button.disable_transform_button
+        )
+        self.input_table.errorRemoved.connect(self.remove_error_message)
+        self.input_table.enableTransform.connect(
+            self.transform_files_button.enable_transform_button
+        )
+
+    def setup_select_files_button_signals(self) -> None:
+        self.select_files_button.clicked.connect(
+            lambda: self.select_files_button.select_image_files(self.input)
+        )
+        self.select_files_button.filesSelected.connect(
+            lambda: self.input_table.display_files(self.input)
+        )
+
+    def setup_transform_files_button_signals(self) -> None:
+        self.transform_files_button.changeStatus.connect(self.input_table.change_status)
+        self.transform_files_button.clicked.connect(
+            lambda: self.transform_files_button.transform_images(self.input)
+        )
+
+    def add_widgets_to_layout(self) -> None:
+        self.widget_layout.addWidget(
+            self.input_table, alignment=Qt.AlignmentFlag.AlignCenter
+        )
+        self.widget_layout.addWidget(
+            self.error_label, alignment=Qt.AlignmentFlag.AlignCenter
+        )
+        self.widget_layout.addWidget(
+            self.select_files_button, alignment=Qt.AlignmentFlag.AlignHCenter
+        )
+        self.widget_layout.addWidget(
+            self.transform_files_button, alignment=Qt.AlignmentFlag.AlignHCenter
+        )

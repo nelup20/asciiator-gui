@@ -11,9 +11,8 @@ class SelectFilesButton(BaseButtonWidget):
 
     def __init__(self):
         super().__init__("Select Image Files")
-        self.clicked.connect(self.select_image_files)
 
-    def select_image_files(self) -> None:
+    def select_image_files(self, input_files: dict) -> None:
         initial_path = f"{Path.home()}"
 
         selected_files = QFileDialog.getOpenFileNames(
@@ -21,7 +20,7 @@ class SelectFilesButton(BaseButtonWidget):
         )
 
         for file in selected_files[0]:
-            self.parent().input[file] = {
+            input_files[file] = {
                 "reduction": 4,
                 "inverted": False,
                 "text_file": False,

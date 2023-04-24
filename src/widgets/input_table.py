@@ -1,6 +1,8 @@
+from typing import List
+
 from PySide6 import QtCore
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import QTableWidget, QWidget, QTableWidgetItem
+from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QWidget
 
 _TABLE_COLUMN_HEADERS = [
     "Name",
@@ -23,14 +25,14 @@ class InputTable(QTableWidget):
     def __init__(self, parent: QWidget):
         super().__init__(0, 8, parent)
 
-        self.displayed_files = []
-        self.cells_with_errors = []
+        self.displayed_files: List[str] = []
+        self.cells_with_errors: List[tuple[int, int]] = []
 
         self.setHorizontalHeaderLabels(_TABLE_COLUMN_HEADERS)
         self.setMinimumSize(QSize(700, 300))
 
-    def display_files(self) -> None:
-        for file_path, options in self.parent().input.items():
+    def display_files(self, input_files: dict) -> None:
+        for file_path, options in input_files.items():
             if file_path in self.displayed_files:
                 continue
 
@@ -50,11 +52,15 @@ class InputTable(QTableWidget):
             output.setFlags(Qt.ItemFlag.ItemIsEnabled)
 
             inverted_checkbox = QTableWidgetItem()
-            inverted_checkbox.setFlags(Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled)
+            inverted_checkbox.setFlags(
+                Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled
+            )
             inverted_checkbox.setCheckState(Qt.CheckState.Unchecked)
 
             text_file_checkbox = QTableWidgetItem()
-            text_file_checkbox.setFlags(Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled)
+            text_file_checkbox.setFlags(
+                Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled
+            )
             text_file_checkbox.setCheckState(Qt.CheckState.Unchecked)
 
             reduction_factor = QTableWidgetItem("4")
@@ -92,17 +98,17 @@ class InputTable(QTableWidget):
             self.optionsChanged.emit(file_path, "text_file", text_file)
 
         if cell.column() == 6:
-            reduction = cell.text()
-
             try:
-                reduction = int(reduction)
+                reduction = int(cell.text())
 
                 if reduction < 1 or reduction > 25:
                     raise ValueError()
 
                 cell.setBackground(Qt.GlobalColor.white)
 
-                if (cell_coords := (cell.row(), cell.column())) in self.cells_with_errors:
+                if (
+                    cell_coords := (cell.row(), cell.column())
+                ) in self.cells_with_errors:
                     self.cells_with_errors.remove(cell_coords)
                     self.errorRemoved.emit(cell_coords)
 
@@ -113,11 +119,15 @@ class InputTable(QTableWidget):
             except ValueError:
                 cell.setBackground(Qt.GlobalColor.red)
 
-                if (cell_coords := (cell.row(), cell.column())) not in self.cells_with_errors:
+                if (
+                    cell_coords := (cell.row(), cell.column())
+                ) not in self.cells_with_errors:
                     self.cells_with_errors.append(cell_coords)
 
-                self.errorOccurred.emit(f"Error for cell at row {cell.row()}, column {cell.column()}. "
-                                        f"The reduction factor needs to be a number between 1 and 25.")
+                self.errorOccurred.emit(
+                    f"Error for cell at row {cell.row()}, column {cell.column()}. "
+                    f"The reduction factor needs to be a number between 1 and 25."
+                )
 
     def change_status(self, new_status: str) -> None:
         for row in range(self.rowCount()):
