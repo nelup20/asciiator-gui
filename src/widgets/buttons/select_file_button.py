@@ -1,3 +1,4 @@
+import os.path
 from pathlib import Path
 
 from PySide6 import QtCore
@@ -23,12 +24,12 @@ class SelectFilesButton(BaseButtonWidget):
             f"Images & Videos ({File.get_file_dialog_filter()})",
         )
 
-        for file in selected_files[0]:
-            input_files[file] = {
+        for file_path in selected_files[0]:
+            input_files[file_path] = {
                 "reduction": 4,
                 "inverted": False,
                 "text_file": False,
-                "output_path": "",
+                "output_path": os.path.dirname(file_path),
             }
 
         self.filesSelected.emit()

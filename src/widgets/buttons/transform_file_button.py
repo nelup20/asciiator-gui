@@ -25,7 +25,7 @@ class TransformFilesButton(BaseButtonWidget):
             )
 
             subprocess.run(
-                f'asciiator "{image_path}" {inverted} {text_file} {reduction} {output_path}'
+                f'asciiator "{image_path}" {inverted} {text_file} {reduction} "{output_path}"'
             )
 
         self.changeStatus.emit("Done")
