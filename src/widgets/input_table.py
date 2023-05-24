@@ -51,7 +51,6 @@ class InputTable(QTableWidget):
             status.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
 
             output = QTableWidgetItem("")
-            output.setFlags(Qt.ItemFlag.ItemIsEnabled)
 
             inverted_checkbox = QTableWidgetItem()
             inverted_checkbox.setFlags(
@@ -89,6 +88,9 @@ class InputTable(QTableWidget):
 
     def cell_value_changed(self, cell: QTableWidgetItem) -> None:
         file_path = self.get_file_path(cell.row())
+
+        if cell.column() == 3:
+            self.optionsChanged.emit(file_path, "output_path", cell.text())
 
         if cell.column() == 4:
             is_inverted = self.is_checked(cell)
