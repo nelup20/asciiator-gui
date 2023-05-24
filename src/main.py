@@ -2,6 +2,7 @@ import sys
 
 from PySide6 import QtWidgets
 
+from src.widgets.custom_styles.checkbox_style import CheckBoxStyle
 from src.widgets.main_window_widget import MainWindowWidget
 
 
@@ -16,6 +17,8 @@ def main():
     with open("./assets/stylesheets/main.qss", "r") as main_stylesheet:
         _style = main_stylesheet.read()
         app.setStyleSheet(_style)
+
+    app.setStyle(CheckBoxStyle(app.style()))
 
     sys.exit(app.exec())
 
