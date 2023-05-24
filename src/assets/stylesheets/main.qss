@@ -1,0 +1,16 @@
+QPushButton {
+    background-color: #262626;
+    color: #FFFFFF;
+    font-family: Titillium;
+    font-size: 18px;
+    width: 250px;
+    height: 40px;
+    max-width: 250px;
+    border-radius: 3px;
+}
+
+QLabel {
+    color: red;
+    font-size: 20px;
+    font-weight: bold;
+}

@@ -2,16 +2,20 @@ import sys
 
 from PySide6 import QtWidgets
 
-from src.widgets.hello_world_widget import HelloWorldWidget
+from src.widgets.main_window_widget import MainWindowWidget
 
 
 def main():
     app = QtWidgets.QApplication([])
 
-    hello_world_widget = HelloWorldWidget()
-    hello_world_widget.resize(800, 600)
-    hello_world_widget.show()
-    hello_world_widget.setWindowTitle("Asciiator GUI")
+    main_window = MainWindowWidget()
+    main_window.resize(800, 600)
+    main_window.setWindowTitle("Asciiator GUI")
+    main_window.show()
+
+    with open("./assets/stylesheets/main.qss", "r") as main_stylesheet:
+        _style = main_stylesheet.read()
+        app.setStyleSheet(_style)
 
     sys.exit(app.exec())
 
