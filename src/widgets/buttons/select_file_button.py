@@ -28,6 +28,7 @@ class SelectFilesButton(BaseButtonWidget):
                 "reduction": 4,
                 "inverted": False,
                 "text_file": False,
+                "output_path": ""
             }
 
         self.filesSelected.emit()
