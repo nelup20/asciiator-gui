@@ -4,6 +4,8 @@ from PySide6 import QtCore
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QWidget
 
+from src.widgets.util.file import File
+
 _TABLE_COLUMN_HEADERS = [
     "Name",
     "Path",
@@ -61,7 +63,8 @@ class InputTable(QTableWidget):
             text_file_checkbox.setFlags(
                 Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled
             )
-            text_file_checkbox.setCheckState(Qt.CheckState.Unchecked)
+            if File.is_image_file(file_path):
+                text_file_checkbox.setCheckState(Qt.CheckState.Unchecked)
 
             reduction_factor = QTableWidgetItem("4")
             reduction_factor.setTextAlignment(Qt.AlignmentFlag.AlignCenter)

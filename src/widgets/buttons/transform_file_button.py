@@ -9,7 +9,7 @@ class TransformFilesButton(BaseButtonWidget):
     changeStatus = QtCore.Signal(str)
 
     def __init__(self):
-        super().__init__("Transform files")
+        super().__init__("Transform Files")
 
     def transform_images(self, input_files: dict) -> None:
         self.changeStatus.emit("Transforming...")
