@@ -14,8 +14,8 @@ VIDEO_FILE_EXTENSIONS = (
 
 class File:
     @staticmethod
-    def is_video_or_gif_file(file_path: str) -> bool:
-        return file_path.endswith(VIDEO_FILE_EXTENSIONS + GIF_FILE_EXTENSION)
+    def is_image_file(file_path: str) -> bool:
+        return file_path.endswith(IMAGE_FILE_EXTENSIONS)
 
     @staticmethod
     def get_file_dialog_filter() -> str:

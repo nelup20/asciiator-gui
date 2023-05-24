@@ -63,7 +63,7 @@ class InputTable(QTableWidget):
             text_file_checkbox.setFlags(
                 Qt.ItemFlag.ItemIsUserCheckable | Qt.ItemFlag.ItemIsEnabled
             )
-            if not File.is_video_or_gif_file(file_path):
+            if File.is_image_file(file_path):
                 text_file_checkbox.setCheckState(Qt.CheckState.Unchecked)
 
             reduction_factor = QTableWidgetItem("4")
