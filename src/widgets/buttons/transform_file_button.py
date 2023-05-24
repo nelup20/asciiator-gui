@@ -19,7 +19,7 @@ class TransformFilesButton(BaseButtonWidget):
             text_file = "-text_file" if options["text_file"] else ""
             reduction = f"--reduction={options['reduction']}"
             output_path = (
-                f"--output_path={options['output_path']}"
+                f"--output_path=\"{options['output_path']}\""
                 if len(options["output_path"].strip()) > 0
                 else ""
             )

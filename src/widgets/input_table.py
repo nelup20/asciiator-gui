@@ -50,7 +50,7 @@ class InputTable(QTableWidget):
             status.setFlags(Qt.ItemFlag.ItemIsEnabled)
             status.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
 
-            output = QTableWidgetItem("")
+            output = QTableWidgetItem(options["output_path"])
 
             inverted_checkbox = QTableWidgetItem()
             inverted_checkbox.setFlags(
