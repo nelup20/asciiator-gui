@@ -9,7 +9,7 @@ from src.widgets.util.file import File
 
 
 class SelectFilesButton(BaseButtonWidget):
-    filesSelected = QtCore.Signal()
+    files_selected = QtCore.Signal()
 
     def __init__(self):
         super().__init__("Select Files")
@@ -32,4 +32,4 @@ class SelectFilesButton(BaseButtonWidget):
                 "output_path": os.path.dirname(file_path),
             }
 
-        self.filesSelected.emit()
+        self.files_selected.emit()

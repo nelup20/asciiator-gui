@@ -14,3 +14,7 @@ QLabel {
     font-size: 20px;
     font-weight: bold;
 }
+
+QPushButton[cssClass="tableButton"] {
+    background-color: #f1f1f1;
+ }

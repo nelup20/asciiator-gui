@@ -2,7 +2,14 @@ from typing import List
 
 from PySide6 import QtCore
 from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QWidget
+from PySide6.QtGui import QCursor
+from PySide6.QtWidgets import (
+    QApplication,
+    QPushButton,
+    QTableWidget,
+    QTableWidgetItem,
+    QWidget,
+)
 
 from src.widgets.util.file import File
 
@@ -14,18 +21,21 @@ _TABLE_COLUMN_HEADERS = [
     "Invert?",
     "Text file?",
     "Reduction",
-    "Actions",
+    "Redo",
+    "Remove",
 ]
 
 
 class InputTable(QTableWidget):
-    optionsChanged = QtCore.Signal(str, str, object)
-    errorOccurred = QtCore.Signal(str)
-    errorRemoved = QtCore.Signal(tuple)
-    enableTransform = QtCore.Signal()
+    options_changed = QtCore.Signal(str, str, object)
+    error_occurred = QtCore.Signal(str)
+    error_removed = QtCore.Signal(tuple)
+    enable_transform = QtCore.Signal()
+    redo_transform = QtCore.Signal(str)
+    remove_file = QtCore.Signal(str)
 
     def __init__(self, parent: QWidget):
-        super().__init__(0, 8, parent)
+        super().__init__(0, 9, parent)
 
         self.displayed_files: List[str] = []
         self.cells_with_errors: List[tuple[int, int]] = []
@@ -68,9 +78,15 @@ class InputTable(QTableWidget):
             reduction_factor = QTableWidgetItem("4")
             reduction_factor.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
 
-            actions = QTableWidgetItem("R D")
-            actions.setFlags(Qt.ItemFlag.ItemIsEnabled)
-            actions.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            redo_button = QPushButton("🔄")
+            redo_button.setProperty("cssClass", "tableButton")
+            redo_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+            redo_button.clicked.connect(self.redo_transformation)
+
+            remove_button = QPushButton("❌")
+            remove_button.setProperty("cssClass", "tableButton")
+            remove_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
+            remove_button.clicked.connect(self.remove_file_from_table)
 
             new_row = self.rowCount()
             self.insertRow(new_row)
@@ -82,7 +98,8 @@ class InputTable(QTableWidget):
             self.setItem(new_row, 4, inverted_checkbox)
             self.setItem(new_row, 5, text_file_checkbox)
             self.setItem(new_row, 6, reduction_factor)
-            self.setItem(new_row, 7, actions)
+            self.setCellWidget(new_row, 7, redo_button)
+            self.setCellWidget(new_row, 8, remove_button)
 
         self.itemChanged.connect(self.cell_value_changed)
 
@@ -90,17 +107,17 @@ class InputTable(QTableWidget):
         file_path = self.get_file_path(cell.row())
 
         if cell.column() == 3:
-            self.optionsChanged.emit(file_path, "output_path", cell.text())
+            self.options_changed.emit(file_path, "output_path", cell.text())
 
         if cell.column() == 4:
             is_inverted = self.is_checked(cell)
 
-            self.optionsChanged.emit(file_path, "inverted", is_inverted)
+            self.options_changed.emit(file_path, "inverted", is_inverted)
 
         if cell.column() == 5:
             text_file = self.is_checked(cell)
 
-            self.optionsChanged.emit(file_path, "text_file", text_file)
+            self.options_changed.emit(file_path, "text_file", text_file)
 
         if cell.column() == 6:
             try:
@@ -115,12 +132,12 @@ class InputTable(QTableWidget):
                     cell_coords := (cell.row(), cell.column())
                 ) in self.cells_with_errors:
                     self.cells_with_errors.remove(cell_coords)
-                    self.errorRemoved.emit(cell_coords)
+                    self.error_removed.emit(cell_coords)
 
-                self.optionsChanged.emit(file_path, "reduction", reduction)
+                self.options_changed.emit(file_path, "reduction", reduction)
 
                 if len(self.cells_with_errors) == 0:
-                    self.enableTransform.emit()
+                    self.enable_transform.emit()
             except ValueError:
                 cell.setBackground(Qt.GlobalColor.red)
 
@@ -129,10 +146,28 @@ class InputTable(QTableWidget):
                 ) not in self.cells_with_errors:
                     self.cells_with_errors.append(cell_coords)
 
-                self.errorOccurred.emit(
-                    f"Error for cell at row {cell.row()}, column {cell.column()}. "
+                self.error_occurred.emit(
+                    f"Error for file nr. {cell.row() + 1}'s reduction factor. "
                     f"The reduction factor needs to be a number between 1 and 25."
                 )
+
+    def redo_transformation(self) -> None:
+        clicked_button = QApplication.focusWidget()
+
+        row = self.indexAt(clicked_button.pos()).row()
+        file_path = self.get_file_path(row)
+
+        self.redo_transform.emit(file_path)
+
+    def remove_file_from_table(self) -> None:
+        clicked_button = QApplication.focusWidget()
+
+        row = self.indexAt(clicked_button.pos()).row()
+        file_path = self.get_file_path(row)
+
+        self.displayed_files.remove(file_path)
+        self.removeRow(row)
+        self.remove_file.emit(file_path)
 
     def change_status(self, new_status: str) -> None:
         for row in range(self.rowCount()):

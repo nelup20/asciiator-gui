@@ -4,15 +4,18 @@ from PySide6 import QtCore
 
 from src.widgets.buttons.base_button_widget import BaseButtonWidget
 
+_DISABLED_BUTTON_BACKGROUND = "background-color: #a2a2a2"
+_ENABLED_BUTTON_BACKGROUND = "background-color: #262626"
+
 
 class TransformFilesButton(BaseButtonWidget):
-    changeStatus = QtCore.Signal(str)
+    status_change = QtCore.Signal(str)
 
     def __init__(self):
         super().__init__("Transform Files")
 
     def transform_images(self, input_files: dict) -> None:
-        self.changeStatus.emit("Transforming...")
+        self.status_change.emit("Transforming...")
 
         for image_path, options in input_files.items():
             inverted = "-inverted" if options["inverted"] else ""
@@ -28,14 +31,13 @@ class TransformFilesButton(BaseButtonWidget):
                 f'asciiator "{image_path}" {inverted} {text_file} {reduction} {output_path}'
             )
 
-        self.changeStatus.emit("Done")
+        self.status_change.emit("Done")
 
     def disable_transform_button(self) -> None:
         self.setDisabled(True)
-        # TODO: try via self#setProperty & QSS rule/selector
-        self.setStyleSheet("background-color: #a2a2a2")
+        self.setStyleSheet(_DISABLED_BUTTON_BACKGROUND)
 
     def enable_transform_button(self) -> None:
         if not self.isEnabled():
             self.setEnabled(True)
-            self.setStyleSheet("background-color: #262626")
+            self.setStyleSheet(_ENABLED_BUTTON_BACKGROUND)
