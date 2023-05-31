@@ -3,7 +3,13 @@ from typing import List
 from PySide6 import QtCore
 from PySide6.QtCore import QSize, Qt
 from PySide6.QtGui import QCursor
-from PySide6.QtWidgets import QTableWidget, QTableWidgetItem, QWidget, QPushButton, QApplication
+from PySide6.QtWidgets import (
+    QApplication,
+    QPushButton,
+    QTableWidget,
+    QTableWidgetItem,
+    QWidget,
+)
 
 from src.widgets.util.file import File
 
@@ -123,7 +129,7 @@ class InputTable(QTableWidget):
                 cell.setBackground(Qt.GlobalColor.white)
 
                 if (
-                        cell_coords := (cell.row(), cell.column())
+                    cell_coords := (cell.row(), cell.column())
                 ) in self.cells_with_errors:
                     self.cells_with_errors.remove(cell_coords)
                     self.error_removed.emit(cell_coords)
@@ -136,7 +142,7 @@ class InputTable(QTableWidget):
                 cell.setBackground(Qt.GlobalColor.red)
 
                 if (
-                        cell_coords := (cell.row(), cell.column())
+                    cell_coords := (cell.row(), cell.column())
                 ) not in self.cells_with_errors:
                     self.cells_with_errors.append(cell_coords)
 

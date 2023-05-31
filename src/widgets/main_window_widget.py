@@ -65,9 +65,11 @@ class MainWindowWidget(QtWidgets.QWidget):
         self.input_table.enable_transform.connect(
             self.transform_files_button.enable_transform_button
         )
-        self.input_table.redo_transform.connect(lambda file_path: self.transform_files_button.transform_images({
-            file_path: self.input[file_path]
-        }))
+        self.input_table.redo_transform.connect(
+            lambda file_path: self.transform_files_button.transform_images(
+                {file_path: self.input[file_path]}
+            )
+        )
         self.input_table.remove_file.connect(self.remove_file)
 
     def setup_select_files_button_signals(self) -> None:
@@ -79,7 +81,9 @@ class MainWindowWidget(QtWidgets.QWidget):
         )
 
     def setup_transform_files_button_signals(self) -> None:
-        self.transform_files_button.status_change.connect(self.input_table.change_status)
+        self.transform_files_button.status_change.connect(
+            self.input_table.change_status
+        )
         self.transform_files_button.clicked.connect(
             lambda: self.transform_files_button.transform_images(self.input)
         )
