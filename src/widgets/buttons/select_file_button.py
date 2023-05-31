@@ -15,8 +15,7 @@ class SelectFilesButton(BaseButtonWidget):
         super().__init__("Select Files")
 
     def select_image_files(self, input_files: dict) -> None:
-        # initial_path = f"{Path.home()}"
-        initial_path = "../"
+        initial_path = f"{Path.home()}"
 
         selected_files = QFileDialog.getOpenFileNames(
             self,
