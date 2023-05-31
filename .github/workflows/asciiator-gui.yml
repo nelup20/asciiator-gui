@@ -33,7 +33,7 @@ jobs:
       run: poetry install --no-interaction --no-root
 
     - name: Sort imports (isort)
-      run: poetry run isort src --check-only
+      run: poetry run isort src --check-only --profile black
 
     - name: Check style (black)
       run: poetry run black src --check
