@@ -52,27 +52,34 @@ class MainWindowWidget(QtWidgets.QWidget):
 
         self.error_label.setText(error_message)
 
+    def remove_file(self, file_path: str) -> None:
+        del self.input[file_path]
+
     def setup_input_table_signals(self) -> None:
-        self.input_table.optionsChanged.connect(self.change_file_options)
-        self.input_table.errorOccurred.connect(self.add_error_message)
-        self.input_table.errorOccurred.connect(
+        self.input_table.options_changed.connect(self.change_file_options)
+        self.input_table.error_occurred.connect(self.add_error_message)
+        self.input_table.error_occurred.connect(
             self.transform_files_button.disable_transform_button
         )
-        self.input_table.errorRemoved.connect(self.remove_error_message)
-        self.input_table.enableTransform.connect(
+        self.input_table.error_removed.connect(self.remove_error_message)
+        self.input_table.enable_transform.connect(
             self.transform_files_button.enable_transform_button
         )
+        self.input_table.redo_transform.connect(lambda file_path: self.transform_files_button.transform_images({
+            file_path: self.input[file_path]
+        }))
+        self.input_table.remove_file.connect(self.remove_file)
 
     def setup_select_files_button_signals(self) -> None:
         self.select_files_button.clicked.connect(
             lambda: self.select_files_button.select_image_files(self.input)
         )
-        self.select_files_button.filesSelected.connect(
+        self.select_files_button.files_selected.connect(
             lambda: self.input_table.display_files(self.input)
         )
 
     def setup_transform_files_button_signals(self) -> None:
-        self.transform_files_button.changeStatus.connect(self.input_table.change_status)
+        self.transform_files_button.status_change.connect(self.input_table.change_status)
         self.transform_files_button.clicked.connect(
             lambda: self.transform_files_button.transform_images(self.input)
         )
